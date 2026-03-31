@@ -2,4 +2,4 @@
 initTheme();
 initNav();
 initReveal();
-initI18n(); // renders all dynamic sections + calls initSnake internally
+initI18n(); // renders all dynamic sections + calls initSnake/initCube internally

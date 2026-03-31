@@ -73,11 +73,7 @@ function renderProjects(projects) {
   if (!grid) return;
   grid.innerHTML = projects.map(function (p) {
     var preview = p.type === 'cube'
-      ? '<div class="cube-scene"><div class="cube">'
-          + '<div class="cube-face front"></div><div class="cube-face back"></div>'
-          + '<div class="cube-face left"></div><div class="cube-face right"></div>'
-          + '<div class="cube-face top"></div><div class="cube-face bottom"></div>'
-          + '</div></div>'
+      ? '<svg id="cube-svg" viewBox="0 0 100 100" width="100" height="100" style="color:var(--light)"></svg>'
       : '<div class="snake-grid" id="snake-grid"></div>';
 
     var tags = p.tags.map(function (tag) { return '<span class="tag">' + tag + '</span>'; }).join('');
@@ -110,8 +106,8 @@ function setLang(lang) {
   renderExperience(t.experience);
   renderProjects(t.projects);
 
-  // re-init snake after DOM update
-  setTimeout(initSnake, 0);
+  // re-init animations after DOM update
+  setTimeout(function () { initSnake(); initCube(); }, 0);
 }
 
 function initI18n() {

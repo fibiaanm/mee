@@ -256,27 +256,7 @@ nav.scrolled { border-color: var(--border); }
   display: flex; align-items: center; justify-content: center;
 }
 
-/* 3D cube */
-.cube-scene { perspective: 300px; width: 80px; height: 80px; }
-.cube {
-  width: 80px; height: 80px;
-  position: relative; transform-style: preserve-3d;
-  animation: spin 10s linear infinite;
-}
-@keyframes spin {
-  from { transform: rotateX(20deg) rotateY(0deg); }
-  to   { transform: rotateX(20deg) rotateY(360deg); }
-}
-.cube-face {
-  position: absolute; width: 80px; height: 80px;
-  border: 1px solid var(--light); background: transparent;
-}
-.cube-face.front  { transform: translateZ(40px); }
-.cube-face.back   { transform: translateZ(-40px) rotateY(180deg); }
-.cube-face.left   { transform: translateX(-40px) rotateY(-90deg); }
-.cube-face.right  { transform: translateX(40px)  rotateY(90deg); }
-.cube-face.top    { transform: translateY(-40px) rotateX(90deg); }
-.cube-face.bottom { transform: translateY(40px)  rotateX(-90deg); }
+/* Cube preview — rendered via JS/SVG in cube.js */
 
 /* Snake grid */
 .snake-grid {
