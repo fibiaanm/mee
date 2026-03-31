@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- document body -->
+  <path d="M5 2 H20 L27 9 V30 Q27 31 26 31 H6 Q5 31 5 30 Z" fill="#19180f"/>
+  <!-- folded corner -->
+  <path d="M20 2 L20 9 H27 Z" fill="#3d3c33"/>
+  <!-- avatar circle -->
+  <circle cx="12.5" cy="12.5" r="3" fill="white" opacity="0.88"/>
+  <!-- name lines (right of avatar) -->
+  <rect x="18" y="11" width="6"  height="1.5" rx="0.75" fill="white" opacity="0.65"/>
+  <rect x="18" y="14" width="4.5" height="1"  rx="0.5"  fill="white" opacity="0.38"/>
+  <!-- divider -->
+  <rect x="8"  y="19" width="16" height="0.75" rx="0.375" fill="white" opacity="0.2"/>
+  <!-- content lines -->
+  <rect x="8"  y="21.5" width="16" height="1.5" rx="0.75" fill="white" opacity="0.55"/>
+  <rect x="8"  y="25"   width="12" height="1.5" rx="0.75" fill="white" opacity="0.55"/>
+</svg>
