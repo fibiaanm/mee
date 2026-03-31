@@ -9,7 +9,7 @@ function initSnake() {
   var COLS   = 12;
   var ROWS   = 8;
   var TOTAL  = COLS * ROWS;
-  var LENGTH = 8;
+  var LENGTH = 4;
 
   container.innerHTML = '';
   for (var i = 0; i < TOTAL; i++) {
@@ -20,32 +20,88 @@ function initSnake() {
 
   var cells = Array.from(container.querySelectorAll('.sc'));
 
-  // Build initial snake horizontally in the middle row, head on the right
+  // snake[0] = head
   var snake = [];
   for (var j = 0; j < LENGTH; j++) {
     snake.push({ row: Math.floor(ROWS / 2), col: 2 + j });
   }
-  snake.reverse(); // snake[0] = head
+  snake.reverse();
 
-  var dir = { dr: 0, dc: 1 }; // start moving right
+  var dir = { dr: 0, dc: 1 };
 
   var ALL_DIRS = [
-    { dr: -1, dc:  0 }, // up
-    { dr:  1, dc:  0 }, // down
-    { dr:  0, dc: -1 }, // left
-    { dr:  0, dc:  1 }, // right
+    { dr: -1, dc:  0 },
+    { dr:  1, dc:  0 },
+    { dr:  0, dc: -1 },
+    { dr:  0, dc:  1 },
   ];
 
-  function pickNextDir() {
-    // Exclude the reverse of the current direction
+  function placeApple() {
+    var occupied = new Set(snake.map(function (s) { return s.row * COLS + s.col; }));
+    var free = [];
+    for (var i = 0; i < TOTAL; i++) {
+      if (!occupied.has(i)) free.push(i);
+    }
+    var idx = free[Math.floor(Math.random() * free.length)];
+    return { row: Math.floor(idx / COLS), col: idx % COLS };
+  }
+
+  var apple = placeApple();
+
+  // Manhattan distance accounting for grid wrapping
+  function dist(a, b) {
+    var dr = Math.abs(a.row - b.row);
+    var dc = Math.abs(a.col - b.col);
+    return Math.min(dr, ROWS - dr) + Math.min(dc, COLS - dc);
+  }
+
+  function pickDir() {
+    var head = snake[0];
+
+    // Build set of body cells to avoid (exclude tail — it will vacate next tick)
+    var body = new Set(
+      snake.slice(0, snake.length - 1).map(function (s) { return s.row * COLS + s.col; })
+    );
+
+    // All directions except the reverse
     var options = ALL_DIRS.filter(function (d) {
       return !(d.dr === -dir.dr && d.dc === -dir.dc);
     });
-    return options[Math.floor(Math.random() * options.length)];
+
+    // Split into safe (no body collision) and unsafe
+    var safe = options.filter(function (d) {
+      var nr = (head.row + d.dr + ROWS) % ROWS;
+      var nc = (head.col + d.dc + COLS) % COLS;
+      return !body.has(nr * COLS + nc);
+    });
+
+    // Prefer safe moves; fall back to any option if fully boxed in
+    var candidates = safe.length > 0 ? safe : options;
+
+    // Among candidates, pick the one whose next cell is closest to the apple
+    var scored = candidates.map(function (d) {
+      return {
+        d:    d,
+        dist: dist({
+          row: (head.row + d.dr + ROWS) % ROWS,
+          col: (head.col + d.dc + COLS) % COLS,
+        }, apple),
+      };
+    });
+
+    scored.sort(function (a, b) { return a.dist - b.dist; });
+
+    var best = scored[0].dist;
+    var tied = scored.filter(function (s) { return s.dist === best; });
+    return tied[Math.floor(Math.random() * tied.length)].d;
   }
 
   function render() {
     cells.forEach(function (c) { c.className = 'sc'; });
+
+    var appleIdx = apple.row * COLS + apple.col;
+    cells[appleIdx].classList.add('apple');
+
     snake.forEach(function (seg, i) {
       var idx = seg.row * COLS + seg.col;
       if (idx >= 0 && idx < TOTAL) {
@@ -55,14 +111,20 @@ function initSnake() {
   }
 
   function tick() {
-    dir = pickNextDir();
+    dir = pickDir();
 
     var head = snake[0];
-    snake.unshift({
+    var next = {
       row: (head.row + dir.dr + ROWS) % ROWS,
       col: (head.col + dir.dc + COLS) % COLS,
-    });
+    };
+
+    snake.unshift(next);
     snake.pop();
+
+    if (next.row === apple.row && next.col === apple.col) {
+      apple = placeApple();
+    }
 
     render();
   }
