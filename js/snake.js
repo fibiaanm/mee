@@ -48,11 +48,8 @@ function initSnake() {
 
   var apple = placeApple();
 
-  // Manhattan distance accounting for grid wrapping
   function dist(a, b) {
-    var dr = Math.abs(a.row - b.row);
-    var dc = Math.abs(a.col - b.col);
-    return Math.min(dr, ROWS - dr) + Math.min(dc, COLS - dc);
+    return Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
   }
 
   function pickDir() {
@@ -68,11 +65,11 @@ function initSnake() {
       return !(d.dr === -dir.dr && d.dc === -dir.dc);
     });
 
-    // Split into safe (no body collision) and unsafe
+    // Split into safe (in bounds + no body collision) and unsafe
     var safe = options.filter(function (d) {
-      var nr = (head.row + d.dr + ROWS) % ROWS;
-      var nc = (head.col + d.dc + COLS) % COLS;
-      return !body.has(nr * COLS + nc);
+      var nr = head.row + d.dr;
+      var nc = head.col + d.dc;
+      return nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && !body.has(nr * COLS + nc);
     });
 
     // Prefer safe moves; fall back to any option if fully boxed in
@@ -82,10 +79,7 @@ function initSnake() {
     var scored = candidates.map(function (d) {
       return {
         d:    d,
-        dist: dist({
-          row: (head.row + d.dr + ROWS) % ROWS,
-          col: (head.col + d.dc + COLS) % COLS,
-        }, apple),
+        dist: dist({ row: head.row + d.dr, col: head.col + d.dc }, apple),
       };
     });
 
@@ -115,8 +109,8 @@ function initSnake() {
 
     var head = snake[0];
     var next = {
-      row: (head.row + dir.dr + ROWS) % ROWS,
-      col: (head.col + dir.dc + COLS) % COLS,
+      row: head.row + dir.dr,
+      col: head.col + dir.dc,
     };
 
     snake.unshift(next);
