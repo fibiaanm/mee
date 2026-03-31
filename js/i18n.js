@@ -73,7 +73,7 @@ function renderProjects(projects) {
   if (!grid) return;
   grid.innerHTML = projects.map(function (p) {
     var preview = p.type === 'cube'
-      ? '<svg id="cube-svg" viewBox="-10 -10 120 120" width="110" height="110" style="color:var(--light)"></svg>'
+      ? '<svg id="cube-svg" viewBox="-5 0 120 100" width="120" height="100" style="color:var(--light)"></svg>'
       : '<div class="snake-grid" id="snake-grid"></div>';
 
     var tags = p.tags.map(function (tag) { return '<span class="tag">' + tag + '</span>'; }).join('');
