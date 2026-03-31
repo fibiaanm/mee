@@ -21,7 +21,7 @@ var translations = {
     sections: {
       skills:     'Technical Skills',
       experience: 'Experience',
-      projects:   'Projects',
+      projects:   'Custom Demos',
     },
     skills: {
       languages:  { title: 'Languages',            items: ['JavaScript / TypeScript', 'Node.js', 'PHP', 'Python', 'Ruby', 'C++ (native bindings)'] },
@@ -102,7 +102,7 @@ var translations = {
     sections: {
       skills:     'Habilidades Técnicas',
       experience: 'Experiencia',
-      projects:   'Proyectos',
+      projects:   'Demos',
     },
     skills: {
       languages:  { title: 'Lenguajes',              items: ['JavaScript / TypeScript', 'Node.js', 'PHP', 'Python', 'Ruby', 'C++ (bindings nativos)'] },

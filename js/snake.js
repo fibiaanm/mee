@@ -4,11 +4,12 @@ function initSnake() {
   var container = document.getElementById('snake-grid');
   if (!container) return;
 
-  // clear previous interval if re-initialized on lang switch
   if (snakeInterval) clearInterval(snakeInterval);
 
-  var COLS = 12, ROWS = 8, TOTAL = COLS * ROWS;
-  var PATH = [50, 49, 48, 47, 46, 34, 22, 23, 24, 25, 26, 27];
+  var COLS   = 12;
+  var ROWS   = 8;
+  var TOTAL  = COLS * ROWS;
+  var LENGTH = 8;
 
   container.innerHTML = '';
   for (var i = 0; i < TOTAL; i++) {
@@ -18,21 +19,54 @@ function initSnake() {
   }
 
   var cells = Array.from(container.querySelectorAll('.sc'));
-  var offset = 0;
+
+  // Build initial snake horizontally in the middle row, head on the right
+  var snake = [];
+  for (var j = 0; j < LENGTH; j++) {
+    snake.push({ row: Math.floor(ROWS / 2), col: 2 + j });
+  }
+  snake.reverse(); // snake[0] = head
+
+  var dir = { dr: 0, dc: 1 }; // start moving right
+
+  var ALL_DIRS = [
+    { dr: -1, dc:  0 }, // up
+    { dr:  1, dc:  0 }, // down
+    { dr:  0, dc: -1 }, // left
+    { dr:  0, dc:  1 }, // right
+  ];
+
+  function pickNextDir() {
+    // Exclude the reverse of the current direction
+    var options = ALL_DIRS.filter(function (d) {
+      return !(d.dr === -dir.dr && d.dc === -dir.dc);
+    });
+    return options[Math.floor(Math.random() * options.length)];
+  }
 
   function render() {
     cells.forEach(function (c) { c.className = 'sc'; });
-    PATH.forEach(function (idx) {
-      var row = Math.floor(idx / COLS);
-      var col = (idx % COLS + offset) % COLS;
-      var ni  = row * COLS + col;
-      if (ni >= 0 && ni < TOTAL) cells[ni].classList.add('on');
+    snake.forEach(function (seg, i) {
+      var idx = seg.row * COLS + seg.col;
+      if (idx >= 0 && idx < TOTAL) {
+        cells[idx].classList.add(i === 0 ? 'head' : 'on');
+      }
     });
   }
 
-  render();
-  snakeInterval = setInterval(function () {
-    offset = (offset + 1) % COLS;
+  function tick() {
+    dir = pickNextDir();
+
+    var head = snake[0];
+    snake.unshift({
+      row: (head.row + dir.dr + ROWS) % ROWS,
+      col: (head.col + dir.dc + COLS) % COLS,
+    });
+    snake.pop();
+
     render();
-  }, 220);
+  }
+
+  render();
+  snakeInterval = setInterval(tick, 220);
 }
